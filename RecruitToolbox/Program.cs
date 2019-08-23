@@ -6,7 +6,8 @@ namespace RecruitToolbox
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            ApplyForm.TemplatePdf = "formtemplate.pdf";
+
         }
     }
 }
