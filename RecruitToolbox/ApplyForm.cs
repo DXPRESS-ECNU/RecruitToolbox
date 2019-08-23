@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
+using System.Text.RegularExpressions;
 using iText.Barcodes;
 using iText.Forms;
 using iText.Forms.Fields;
@@ -70,45 +71,18 @@ namespace RecruitToolbox
         }
         public string StringReplace(string originalString)
         {
-            Dictionary<string,string> dictionary = StrToDic(originalString);
-            dictionary["head"] = FormSettings.Head;
-            dictionary["title"] = FormSettings.Title;
-            dictionary["name"] = Applicant.Name;
-            dictionary["sid"] = Applicant.Sid;
-            dictionary["college"] = Applicant.College;
-            dictionary["district"] = Applicant.District;
-            dictionary["tel"] = Applicant.Tel;
-            dictionary["mail"] = Applicant.Mail;
+            string result = Regex.Replace(originalString, "[name]", Applicant.Name);
+            Regex.Replace(result, "\\[sid\\]", Applicant.Sid);
+            Regex.Replace(result, "\\[college\\]", Applicant.College);
+            Regex.Replace(result, "\\[district\\]", Applicant.District);
+            Regex.Replace(result, "\\[tel\\]", Applicant.Tel);
+            Regex.Replace(result, "\\[mail\\]", Applicant.Mail);
 
-            //TODO add applying
+            //TODO fill applying
 
-            dictionary["resume"] = Applicant.Resume;
-            dictionary["note"] = FormSettings.Note;
-            return DicToStr(dictionary);
+            Regex.Replace(result, "\\[resume\\]", Applicant.Resume);
+            return result;
         }
 
-        private Dictionary<string, string> StrToDic(string originalString)
-        {
-            string[] temps = originalString.Split('-');
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
-            foreach (var temp in temps)
-            {
-                string[] information = temp.Split(':');
-                dictionary.Add(information[0], information[1]);
-            }
-
-            return dictionary;
-        }
-
-        private string DicToStr(Dictionary<string, string> dictionary)
-        {
-            string result = "";
-            foreach (var information in dictionary)
-            {
-                result += $"{information.Key}:{information.Value}-";
-            }
-
-            return result.Substring(result.Length - 1, 1);
-        }
     }
 }
