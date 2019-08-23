@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text;
 using iText.Barcodes;
 using iText.Forms;
@@ -40,9 +41,19 @@ namespace RecruitToolbox
             var template = new PdfDocument(new PdfReader(TemplatePdf));
             var form = PdfAcroForm.GetAcroForm(template, false);
             var fields = form.GetFormFields();
+            fields["head"].SetValue(FormSettings.Head);
             fields["title"].SetValue(FormSettings.Title);
             fields["name"].SetValue(Applicant.Name);
-            // TODO Finish filling form
+            fields["sid"].SetValue(Applicant.Sid);
+            fields["college"].SetValue(Applicant.College);
+            fields["district"].SetValue(Applicant.District);
+            fields["tel"].SetValue(Applicant.Tel);
+            fields["mail"].SetValue(Applicant.Mail);
+            
+            //TODO complete field["applying"]
+
+            fields["resume"].SetValue(Applicant.Resume);
+            fields["note"].SetValue(FormSettings.Note);
 
             if (FormSettings.IsAddBarcode)
             {
@@ -59,8 +70,45 @@ namespace RecruitToolbox
         }
         public string StringReplace(string originalString)
         {
-            // TODO Finish this function
-            throw new NotImplementedException();
+            Dictionary<string,string> dictionary = StrToDic(originalString);
+            dictionary["head"] = FormSettings.Head;
+            dictionary["title"] = FormSettings.Title;
+            dictionary["name"] = Applicant.Name;
+            dictionary["sid"] = Applicant.Sid;
+            dictionary["college"] = Applicant.College;
+            dictionary["district"] = Applicant.District;
+            dictionary["tel"] = Applicant.Tel;
+            dictionary["mail"] = Applicant.Mail;
+
+            //TODO add applying
+
+            dictionary["resume"] = Applicant.Resume;
+            dictionary["note"] = FormSettings.Note;
+            return DicToStr(dictionary);
+        }
+
+        private Dictionary<string, string> StrToDic(string originalString)
+        {
+            string[] temps = originalString.Split('-');
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            foreach (var temp in temps)
+            {
+                string[] information = temp.Split(':');
+                dictionary.Add(information[0], information[1]);
+            }
+
+            return dictionary;
+        }
+
+        private string DicToStr(Dictionary<string, string> dictionary)
+        {
+            string result = "";
+            foreach (var information in dictionary)
+            {
+                result += $"{information.Key}:{information.Value}-";
+            }
+
+            return result.Substring(result.Length - 1, 1);
         }
     }
 }
