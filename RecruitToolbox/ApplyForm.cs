@@ -57,5 +57,10 @@ namespace RecruitToolbox
             form.FlattenFields();
             return template.GetFirstPage();
         }
+        public string StringReplace(string originalString)
+        {
+            // TODO Finish this function
+            throw new NotImplementedException();
+        }
     }
 }
