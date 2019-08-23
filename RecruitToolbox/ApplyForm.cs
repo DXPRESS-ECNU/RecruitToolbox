@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text;
+using System.Text.RegularExpressions;
 using iText.Barcodes;
 using iText.Forms;
 using iText.Forms.Fields;
@@ -40,9 +42,19 @@ namespace RecruitToolbox
             var template = new PdfDocument(new PdfReader(TemplatePdf));
             var form = PdfAcroForm.GetAcroForm(template, false);
             var fields = form.GetFormFields();
+            fields["head"].SetValue(FormSettings.Head);
             fields["title"].SetValue(FormSettings.Title);
             fields["name"].SetValue(Applicant.Name);
-            // TODO Finish filling form
+            fields["sid"].SetValue(Applicant.Sid);
+            fields["college"].SetValue(Applicant.College);
+            fields["district"].SetValue(Applicant.District);
+            fields["tel"].SetValue(Applicant.Tel);
+            fields["mail"].SetValue(Applicant.Mail);
+            
+            //TODO complete field["applying"]
+
+            fields["resume"].SetValue(Applicant.Resume);
+            fields["note"].SetValue(FormSettings.Note);
 
             if (FormSettings.IsAddBarcode)
             {
@@ -59,8 +71,18 @@ namespace RecruitToolbox
         }
         public string StringReplace(string originalString)
         {
-            // TODO Finish this function
-            throw new NotImplementedException();
+            string result = Regex.Replace(originalString, "[name]", Applicant.Name);
+            Regex.Replace(result, "\\[sid\\]", Applicant.Sid);
+            Regex.Replace(result, "\\[college\\]", Applicant.College);
+            Regex.Replace(result, "\\[district\\]", Applicant.District);
+            Regex.Replace(result, "\\[tel\\]", Applicant.Tel);
+            Regex.Replace(result, "\\[mail\\]", Applicant.Mail);
+
+            //TODO fill applying
+
+            Regex.Replace(result, "\\[resume\\]", Applicant.Resume);
+            return result;
         }
+
     }
 }
