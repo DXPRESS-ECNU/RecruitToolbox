@@ -42,19 +42,17 @@ namespace RecruitToolbox
             var template = new PdfDocument(new PdfReader(TemplatePdf));
             var form = PdfAcroForm.GetAcroForm(template, false);
             var fields = form.GetFormFields();
-            fields["head"].SetValue(FormSettings.Head);
-            fields["title"].SetValue(FormSettings.Title);
+            fields["head"].SetValue(StringReplace(FormSettings.Head));
+            fields["title"].SetValue(StringReplace(FormSettings.Title));
             fields["name"].SetValue(Applicant.Name);
             fields["sid"].SetValue(Applicant.Sid);
             fields["college"].SetValue(Applicant.College);
             fields["district"].SetValue(Applicant.District);
             fields["tel"].SetValue(Applicant.Tel);
             fields["mail"].SetValue(Applicant.Mail);
-            
-            //TODO complete field["applying"]
-
+            fields["applying"].SetValue(string.Join('\t', Applicant.Applying));
             fields["resume"].SetValue(Applicant.Resume);
-            fields["note"].SetValue(FormSettings.Note);
+            fields["note"].SetValue(StringReplace(FormSettings.Note));
 
             if (FormSettings.IsAddBarcode)
             {
@@ -71,16 +69,17 @@ namespace RecruitToolbox
         }
         public string StringReplace(string originalString)
         {
-            string result = Regex.Replace(originalString, "[name]", Applicant.Name);
-            Regex.Replace(result, "\\[sid\\]", Applicant.Sid);
-            Regex.Replace(result, "\\[college\\]", Applicant.College);
-            Regex.Replace(result, "\\[district\\]", Applicant.District);
-            Regex.Replace(result, "\\[tel\\]", Applicant.Tel);
-            Regex.Replace(result, "\\[mail\\]", Applicant.Mail);
+            string result =
+                originalString
+                    .Replace(@"[name]", Applicant.Name)
+                    .Replace(@"[sid]", Applicant.Sid)
+                    .Replace(@"[college]", Applicant.College)
+                    .Replace(@"[district]", Applicant.District)
+                    .Replace(@"[tel]", Applicant.Tel)
+                    .Replace(@"[mail]", Applicant.Mail)
+                    .Replace(@"[resume]", Applicant.Resume)
+                    .Replace(@"[applying]", string.Join(", ", Applicant.Applying));
 
-            //TODO fill applying
-
-            Regex.Replace(result, "\\[resume\\]", Applicant.Resume);
             return result;
         }
 
