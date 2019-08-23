@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using System.Text.RegularExpressions;
-using iText.Barcodes;
+﻿using iText.Barcodes;
 using iText.Forms;
-using iText.Forms.Fields;
-using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
-using iText.Kernel.Pdf.Canvas;
 using iText.Layout;
 using iText.Layout.Element;
+using System.Collections.Generic;
 
 namespace RecruitToolbox
 {
