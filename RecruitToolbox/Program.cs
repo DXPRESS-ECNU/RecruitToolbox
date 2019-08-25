@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace RecruitToolbox
@@ -10,9 +12,10 @@ namespace RecruitToolbox
     {
         static void Main(string[] args)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             while (true)
             {
-                Console.Write("1. Generate Applying Form PDF\n0. Exit\nChoose Function:  ");
+                Console.Write("1. Generate Applying Form PDF\n2. Output CSV Template\n0. Exit\nChoose Function:  ");
                 string func = Console.ReadLine();
 
                 switch (func)
@@ -22,9 +25,34 @@ namespace RecruitToolbox
                     case "1":
                         GenerateForm();
                         break;
+                    case "2":
+                        CsvTemplate();
+                        break;
                 }
             }
 
+        }
+
+        static void CsvTemplate()
+        {
+            Applicant applicant1 = new Applicant
+            {
+                Sid = "10000000000",
+                ApplyingArray = new[] {"新闻部", "新媒体部"},
+                College = "传播学院",
+                District = "闵行校区",
+                Mail = "hello@163.com",
+                Name = "张三",
+                Resume = "我是张三",
+                Tel = "18911111111"
+            };
+            using (var writer = new StreamWriter(new FileStream("applicants.csv", FileMode.CreateNew), Encoding.GetEncoding("GB2312")))
+            {
+                using (var csv = new CsvWriter(writer))
+                {
+                    csv.WriteRecords(new []{applicant1});
+                }
+            }
         }
 
         static void GenerateForm()
@@ -37,11 +65,11 @@ namespace RecruitToolbox
                 goto GetCsv;
             }
 
-            IEnumerable<Applicant> applicants;
-            using (var reader = new StreamReader(applicantCsv))
+            List<Applicant> applicants;
+            using (var reader = new StreamReader(new FileStream(applicantCsv, FileMode.Open), Encoding.GetEncoding("GB2312")))
             using (var csv = new CsvReader(reader))
             {
-                applicants = csv.GetRecords<Applicant>();
+                applicants = csv.GetRecords<Applicant>().ToList();
             }
 
             LoadTemplate:

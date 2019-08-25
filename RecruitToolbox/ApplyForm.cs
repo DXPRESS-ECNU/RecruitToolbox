@@ -1,9 +1,11 @@
-﻿using iText.Barcodes;
+﻿using System;
+using iText.Barcodes;
 using iText.Forms;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using System.Collections.Generic;
+using System.IO;
 
 namespace RecruitToolbox
 {
@@ -24,15 +26,20 @@ namespace RecruitToolbox
             foreach (Applicant applicant in applicants)
             {
                 ApplyForm singleApplyForm = new ApplyForm(applicant);
-                pdfDocument.AddPage(singleApplyForm.GetPage());
+
+                var sap = new PdfDocument(new PdfReader(singleApplyForm.GetPage()));
+                sap.CopyPagesTo(1, sap.GetNumberOfPages(), pdfDocument);
             }
             
             return pdfDocument;
         }
 
-        public PdfPage GetPage()
+        public MemoryStream GetPage()
         {
-            var template = new PdfDocument(new PdfReader(TemplatePdf));
+            MemoryStream pdfStream = new MemoryStream();
+            PdfWriter writer = new PdfWriter(pdfStream);
+            writer.SetCloseStream(false);
+            var template = new PdfDocument(new PdfReader(TemplatePdf), writer);
             var form = PdfAcroForm.GetAcroForm(template, false);
             var fields = form.GetFormFields();
             fields["head"].SetValue(StringReplace(FormSettings.Head));
@@ -43,7 +50,7 @@ namespace RecruitToolbox
             fields["district"].SetValue(Applicant.District);
             fields["tel"].SetValue(Applicant.Tel);
             fields["mail"].SetValue(Applicant.Mail);
-            fields["applying"].SetValue(string.Join('\t', Applicant.Applying));
+            fields["apply"].SetValue(string.Join('\t', Applicant.ApplyingArray));
             fields["resume"].SetValue(Applicant.Resume);
             fields["note"].SetValue(StringReplace(FormSettings.Note));
 
@@ -58,10 +65,16 @@ namespace RecruitToolbox
             }
             
             form.FlattenFields();
-            return template.GetFirstPage();
+            template.Close();
+            pdfStream.Position = 0;
+            return pdfStream;
         }
         public string StringReplace(string originalString)
         {
+            if (string.IsNullOrEmpty(originalString))
+            {
+                return String.Empty;
+            }
             string result =
                 originalString
                     .Replace(@"[name]", Applicant.Name)
@@ -71,7 +84,7 @@ namespace RecruitToolbox
                     .Replace(@"[tel]", Applicant.Tel)
                     .Replace(@"[mail]", Applicant.Mail)
                     .Replace(@"[resume]", Applicant.Resume)
-                    .Replace(@"[applying]", string.Join(", ", Applicant.Applying));
+                    .Replace(@"[apply]", string.Join(", ", Applicant.ApplyingArray));
 
             return result;
         }

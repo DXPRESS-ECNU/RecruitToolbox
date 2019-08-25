@@ -8,7 +8,13 @@
         public string Mail { get; set; }
         public string College { get; set; }
         public string District { get; set; }
-        public string[] Applying { get; set; }
+        public string[] ApplyingArray { get; set; }
+
+        public string Applying
+        {
+            get => string.Join(';', ApplyingArray);
+            set => ApplyingArray = value.Split(';');
+        }
         public string Resume { get; set; }
     }
 }
