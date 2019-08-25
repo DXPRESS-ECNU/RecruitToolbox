@@ -78,6 +78,7 @@ namespace RecruitToolbox
             string result =
                 originalString
                     .Replace(@"[name]", Applicant.Name)
+                    .Replace(@"[id]", Applicant.Id)
                     .Replace(@"[sid]", Applicant.Sid)
                     .Replace(@"[college]", Applicant.College)
                     .Replace(@"[district]", Applicant.District)

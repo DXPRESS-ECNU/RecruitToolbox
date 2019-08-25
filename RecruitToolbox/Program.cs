@@ -37,6 +37,7 @@ namespace RecruitToolbox
         {
             Applicant applicant1 = new Applicant
             {
+                Id = "1",
                 Sid = "10000000000",
                 ApplyingArray = new[] {"新闻部", "新媒体部"},
                 College = "传播学院",
@@ -46,7 +47,7 @@ namespace RecruitToolbox
                 Resume = "我是张三",
                 Tel = "18911111111"
             };
-            using (var writer = new StreamWriter(new FileStream("applicants.csv", FileMode.CreateNew), Encoding.GetEncoding("GB2312")))
+            using (var writer = new StreamWriter(new FileStream("applicants.csv", FileMode.Create), Encoding.GetEncoding("GB2312")))
             {
                 using (var csv = new CsvWriter(writer))
                 {

@@ -2,8 +2,9 @@
 {
     class Applicant
     {
-        public string Sid { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
+        public string Sid { get; set; }
         public string Tel { get; set; }
         public string Mail { get; set; }
         public string College { get; set; }
