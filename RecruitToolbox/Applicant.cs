@@ -1,4 +1,6 @@
-﻿namespace RecruitToolbox
+﻿using System;
+
+namespace RecruitToolbox
 {
     class Applicant
     {
@@ -14,7 +16,7 @@
         public string Applying
         {
             get => string.Join(';', ApplyingArray);
-            set => ApplyingArray = value.Split(';');
+            set => ApplyingArray = value.Split(new []{';',',','|'}, StringSplitOptions.RemoveEmptyEntries);
         }
         public string Resume { get; set; }
     }
